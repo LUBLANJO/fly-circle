@@ -2,7 +2,8 @@
 <html>
 <head>
     <title>Fly Circle</title>
-    <link rel="icon" type="image/x-icon" href="favicon.png"></link>    
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         body {
             display: flex;
@@ -12,6 +13,7 @@
             margin: 0;
             background: linear-gradient(135deg, #87CEEB, #E0F6FF, #FFB6C1);
             font-family: Arial, sans-serif;
+            overflow: hidden; /* Prevent body scrollbars */
         }
 
         #game-container {
@@ -200,7 +202,7 @@
         <button id="pause-button" onclick="togglePause()">Pause</button>
         <div id="notification"></div>
         <div id="start-screen">
-            <h2>Flappy Bird</h2>
+            <h2>Fly Circle</h2>
             <div id="leaderboard"></div>
             <div id="achievements"></div>
             <div id="tips">Controls: Spacebar, Mouse Click, or Touch (Mobile) to jump. Ctrl + P to pause/resume. Avoid pipes and clouds. Collect power-ups to slow down.</div>
@@ -209,6 +211,9 @@
             <button class="button" id="hard-btn" onclick="startGame('hard')">Hard</button>
             <button class="button" id="nightmare-btn" onclick="startGame('nightmare')" style="display: none;">Nightmare</button>
             <button class="button" onclick="resetHighScores()">Reset High Scores</button>
+            <div style="color: white; font-size: 12px; margin-top: 10px;">
+                <a href="https://www.flaticon.com/free-icons/planet" title="planet icons" style="color: white; text-decoration: none;">Planet icons created by hqrloveq - Flaticon</a>
+            </div>
         </div>
         <div id="pause-screen">
             <h2>Paused</h2>
@@ -224,12 +229,11 @@
         </div>
     </div>
 
-    <!-- Audio hosted on GitHub Pages (replace 'username' with your GitHub username) -->
-    <audio id="jump-sound" src="https://lublanjo.github.io/fly-circle/jump.mp3"></audio>
-    <audio id="pipe-sound" src="https://lublanjo.github.io/fly-circle/pipe.mp3"></audio>
-    <audio id="game-over-sound" src="https://lublanjo.github.io/fly-circle/gameover.mp3"></audio>
-    <audio id="power-up-sound" src="https://lublanjo.github.io/fly-circle/powerup.mp3"></audio>
-    <audio id="bg-music" src="https://lublanjo.github.io/fly-circle/bgmusic.mp3" loop></audio>
+    <audio id="jump-sound" src="jump.mp3"></audio>
+    <audio id="pipe-sound" src="pipe.mp3"></audio>
+    <audio id="game-over-sound" src="gameover.mp3"></audio>
+    <audio id="power-up-sound" src="powerup.mp3"></audio>
+    <audio id="bg-music" src="bgmusic.mp3" loop></audio>
 
     <script>
         const gameContainer = document.getElementById('game-container');
@@ -290,7 +294,6 @@
         let achievements = JSON.parse(localStorage.getItem('achievements')) || [];
 
         function updateLeaderboard() {
-            console.log('Updating leaderboard:', highScores);
             leaderboard.innerHTML = `High Scores:<br>Easy: ${highScores.easy}<br>Medium: ${highScores.medium}<br>Hard: ${highScores.hard}<br>Nightmare: ${highScores.nightmare}`;
             nightmareBtn.style.display = highScores.hard >= 40 ? 'block' : 'none';
             achievementsDisplay.innerHTML = `Achievements: ${achievements.join(', ')}`;
@@ -315,7 +318,6 @@
         }
 
         function startGame(level) {
-            console.log('Starting game with level:', level);
             gameStarted = true;
             startScreen.style.display = 'none';
             levelConfig = { ...levels[level] };
@@ -370,7 +372,6 @@
             }
 
             if (birdY > 560 || birdY < 0) {
-                console.log('Bird out of bounds, ending game');
                 endGame();
             }
         }
@@ -392,8 +393,8 @@
             pipe.style.background = `linear-gradient(to bottom, #00${Math.floor(100 + Math.random() * 155).toString(16)}00, #00FF00)`;
 
             const gap = MIN_HORIZONTAL_GAP + (Math.random() * (MAX_HORIZONTAL_GAP - MIN_HORIZONTAL_GAP) * (1 - complexityFactor * 0.5));
-            const startX = pipes.length > 0 ? 
-                Math.max(800, pipes[pipes.length - 1].x + gap) : 
+            const startX = pipes.length > 0 ?
+                Math.max(800, pipes[pipes.length - 1].x + gap) :
                 800;
 
             pipe.style.left = startX + 'px';
@@ -445,7 +446,6 @@
                     birdRect.left < pipeRect.right &&
                     (pipe.isTop ? birdRect.top < pipeRect.bottom : birdRect.bottom > pipeRect.top)
                 ) {
-                    console.log('Collision with pipe, ending game');
                     endGame();
                 }
 
@@ -556,18 +556,14 @@
             if (e.code === 'Space') {
                 jump();
             } else if (e.ctrlKey && e.code === 'KeyP') {
-                e.preventDefault(); // Prevent browser print dialog
+                e.preventDefault();
                 togglePause();
             }
         });
 
         gameContainer.addEventListener('mousedown', (e) => {
             e.preventDefault();
-            const rect = gameContainer.getBoundingClientRect();
-            if (e.clientX >= rect.left && e.clientX <= rect.right &&
-                e.clientY >= rect.top && e.clientY <= rect.bottom) {
-                jump();
-            }
+            jump();
         });
 
         gameContainer.addEventListener('touchstart', (e) => {
@@ -598,7 +594,6 @@
         }
 
         function endGame() {
-            console.log('Game ended with score:', score);
             gameOver = true;
             clearInterval(pipeSpawnInterval);
             clearInterval(cloudSpawnInterval);
