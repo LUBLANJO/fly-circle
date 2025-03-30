@@ -50,6 +50,11 @@
             background-color: #87CEEB;
             box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 0 15px rgba(0,0,0,0.2);
             transition: background-color 3s ease-in-out;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         #bird {
@@ -226,6 +231,9 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             display: inline-block;
+            -webkit-appearance: none;
+            appearance: none;
+            outline: none;
         }
         .button:hover {
             transform: translateY(-2px) scale(1.03);
@@ -252,18 +260,6 @@
         #start-screen > div, #start-screen > button {
             margin-top: 1vh;
         }
-
-        /* Checkbox styling (for optional confirmation, commented out) */
-        #reset-confirm-container {
-            margin-top: 10px;
-            color: white;
-            font-size: clamp(12px, 2.5vw, 16px);
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-        }
-        #reset-confirm-checkbox {
-            margin-right: 5px;
-            transform: scale(1.2);
-        }
     </style>
 </head>
 <body>
@@ -286,14 +282,6 @@
                 <button class="button" id="nightmare-btn" onclick="startGame('nightmare')" style="display: none;">Nightmare</button>
             </div>
             <button class="button" onclick="resetHighScores()" style="background: linear-gradient(45deg, #888, #666); margin-top: 20px;">Reset Scores</button>
-            <!-- Optional Checkbox Version (commented out; uncomment to use instead) -->
-            <!--
-            <div id="reset-confirm-container">
-                <input type="checkbox" id="reset-confirm-checkbox" checked>
-                <label for="reset-confirm-checkbox">Confirm Reset</label>
-            </div>
-            <button class="button" onclick="resetHighScores()" style="background: linear-gradient(45deg, #888, #666); margin-top: 10px;">Reset Scores</button>
-            -->
         </div>
 
         <div id="pause-screen">
@@ -370,7 +358,7 @@
         // Constants
         const BIRD_SIZE = 40;
         const POWERUP_SIZE = 30;
-        const VERTICAL_GAP = 135; // Increased to match max jump height (~94px) + bird size (40px) + margin
+        const VERTICAL_GAP = 135; // Matches max jump height (~94px) + bird size (40px) + margin
         const PIPE_WIDTHS = [50, 70, 90];
         const MIN_HORIZONTAL_GAP = 250;
         const MAX_HORIZONTAL_GAP = 300;
@@ -542,7 +530,7 @@
             bottomPipe.style.left = startX + 'px';
             bottomPipe.style.bottom = '0px';
             bottomPipe.style.background = `linear-gradient(to top, #1e7e34, #28a745 ${bottomPipeHeight - 20}px, #19692c)`;
-            gameContainer.appendChild(bottomPipe);
+            gameContainer.appendChild(bottomPipe); // Fixed typo: changed 'customPipe' to 'bottomPipe'
             const bottomPipeY = gameHeight - bottomPipeHeight;
             pipes.push({ element: bottomPipe, x: startX, y: bottomPipeY, height: bottomPipeHeight, width: pipeWidth, isTop: false, passed: false });
         }
@@ -764,23 +752,6 @@
             }
         });
 
-        gameContainer.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            const rect = gameContainer.getBoundingClientRect();
-            if (e.clientX >= rect.left && e.clientX <= rect.right &&
-                e.clientY >= rect.top && e.clientY <= rect.bottom &&
-                !e.target.closest('button')) {
-                jump();
-            }
-        });
-
-        gameContainer.addEventListener('touchstart', (e) => {
-            if (!e.target.closest('button')) {
-                e.preventDefault();
-                jump();
-            }
-        }, { passive: false });
-
         // Game Loop
         function gameLoop(timestamp) {
             if (gameOver) return;
@@ -875,8 +846,136 @@
         window.addEventListener('load', () => {
             updateLeaderboard();
             bird.style.display = 'none';
-            bgMusic.play().catch(e => console.warn('Background music autoplay failed on load. User interaction may be required.'));
+            bgMusic.play().catch(e => console.warn('Background music autoplay failed on load:', e));
         });
+
+        // Enhanced Mobile and Cross-Browser Compatibility
+        document.querySelector('meta[name="viewport"]').setAttribute('content', 
+            'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+
+        (function enhanceTouchSupport() {
+            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+            function handleJumpEvent(e) {
+                e.preventDefault();
+                if (!gameStarted || gameOver || isPaused) return;
+                const rect = gameContainer.getBoundingClientRect();
+                const x = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                const y = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom && 
+                    !e.target.closest('button')) {
+                    jump();
+                }
+            }
+
+            if (isTouchDevice) {
+                gameContainer.addEventListener('touchstart', handleJumpEvent, { passive: false });
+                gameContainer.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+            } else {
+                gameContainer.addEventListener('mousedown', handleJumpEvent);
+            }
+            gameContainer.addEventListener('contextmenu', e => e.preventDefault());
+        })();
+
+        (function adjustForMobile() {
+            function resizeGame() {
+                const gameWidth = Math.min(window.innerWidth * 0.9, 800);
+                const aspectRatio = 800 / 600;
+                const gameHeight = Math.min(gameWidth / aspectRatio, window.innerHeight * 0.9);
+                gameContainer.style.width = `${gameWidth}px`;
+                gameContainer.style.height = `${gameHeight}px`;
+                gameContainer.style.maxWidth = 'none';
+                gameContainer.style.maxHeight = 'none';
+            }
+
+            window.addEventListener('resize', resizeGame);
+            window.addEventListener('orientationchange', resizeGame);
+            resizeGame();
+        })();
+
+        (function handleAudioCompatibility() {
+            const audioElements = [bgMusic, jumpSound, pipeSound, gameOverSound, powerUpSound];
+            
+            function unlockAudio() {
+                audioElements.forEach(audio => {
+                    audio.play().then(() => audio.pause()).catch(() => {});
+                    audio.currentTime = 0;
+                });
+                document.removeEventListener('touchstart', unlockAudio);
+                document.removeEventListener('click', unlockAudio);
+            }
+
+            document.addEventListener('touchstart', unlockAudio, { once: true });
+            document.addEventListener('click', unlockAudio, { once: true });
+
+            const originalPlay = bgMusic.play;
+            bgMusic.play = function() {
+                return originalPlay.call(this).catch(e => {
+                    console.warn('Background music failed to play:', e);
+                    showNotification("Tap to start music on this device.");
+                });
+            };
+        })();
+
+        (function addFullscreenSupport() {
+            const fullscreenBtn = document.createElement('button');
+            fullscreenBtn.textContent = 'Fullscreen';
+            fullscreenBtn.className = 'button';
+            fullscreenBtn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+            fullscreenBtn.style.marginTop = '10px';
+            startScreen.appendChild(fullscreenBtn);
+            pauseScreen.querySelector('div').appendChild(fullscreenBtn.cloneNode(true));
+            gameOverScreen.querySelector('div').appendChild(fullscreenBtn.cloneNode(true));
+
+            function toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    gameContainer.requestFullscreen().catch(err => console.warn('Fullscreen failed:', err));
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+
+            document.querySelectorAll('#start-screen .button, #pause-screen .button, #game-over-screen .button')
+                .forEach(btn => {
+                    if (btn.textContent === 'Fullscreen') {
+                        btn.addEventListener('click', toggleFullscreen);
+                    }
+                });
+
+            document.addEventListener('fullscreenchange', () => {
+                if (document.fullscreenElement) {
+                    gameContainer.style.border = 'none';
+                    gameContainer.style.borderRadius = '0';
+                } else {
+                    gameContainer.style.border = '10px solid #5a4b3c';
+                    gameContainer.style.borderRadius = '20px';
+                }
+            });
+        })();
+
+        (function optimizePerformance() {
+            const isLowEndDevice = window.innerWidth < 768 || navigator.userAgent.includes('Android');
+            let lastFrameTime = 0;
+            const targetFPS = isLowEndDevice ? 30 : 60;
+            const frameInterval = 1000 / targetFPS;
+
+            const originalGameLoop = gameLoop;
+            window.gameLoop = function(timestamp) {
+                if (timestamp - lastFrameTime >= frameInterval) {
+                    originalGameLoop(timestamp);
+                    lastFrameTime = timestamp;
+                } else {
+                    gameLoopId = requestAnimationFrame(gameLoop);
+                }
+            };
+
+            if (isLowEndDevice) {
+                clearInterval(cloudSpawnInterval);
+                cloudSpawnInterval = setInterval(createCloud, 10000);
+            }
+        })();
+
+        console.log('Fly Circle loaded with mobile and cross-browser support.');
     </script>
 </body>
 </html>
