@@ -1,15 +1,374 @@
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Fly Circle</title>
+    <meta content='You can play Flappy Bird game here for free. You can choose the level you want to play: Easy, Medium, Hard and Nightmare' name='description'/>
+    <title>Flappy Bird</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" user-scalable="no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
 
     <style>
+    #game-container {
+            width: 90vw;
+            max-width: 800px;
+            height: 90vh;
+            max-height: 600px;
+            position: relative;
+            overflow: hidden;
+            border: 10px solid #5a4b3c;
+            border-radius: 20px;
+            background: url('background.jpg') no-repeat center/cover;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Bird with Transparent Background */
+        #bird {
+            width: 40px;
+            height: 40px;
+            background: url('bird.png') no-repeat center/contain;
+            position: absolute;
+            left: 25%;
+            top: 46.67%;
+            transition: transform 0.1s;
+            z-index: 5;
+        }
+
+        /* Pipes without Image */
+        .pipe {
+            background: linear-gradient(to right, #28a745, #218838); /* Solid color instead of image */
+            border: 2px solid #19692c;
+            position: absolute;
+            z-index: 2;
+        }
+        .pipe-top { transform-origin: center top; }
+        .pipe-bottom { transform-origin: center bottom; }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            #game-container {
+                width: 98vw;
+                height: 98vh;
+                border-width: 5px;
+            }
+            #bird { width: 30px; height: 30px; }
+            .pipe { border-width: 1px; }
+        }
+
+        @media (min-width: 1200px) {
+            #game-container {
+                width: 800px;
+                height: 600px;
+            }
+        }
+    /* Mobile-first styles (applied by default) */
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6; /* Good for readability on smaller screens */
+}
+
+header {
+    background-color: #333;
+    color: white;
+    padding: 1em;
+    text-align: center;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column; /* Stack navigation items on mobile */
+    align-items: center;
+    background-color: #444;
+}
+
+nav ul li a {
+    display: block;
+    color: white;
+    padding: 0.8em;
+    text-decoration: none;
+    width: 100%; /* Make links take full width on mobile */
+    text-align: center;
+}
+
+.container {
+    margin: 15px; /* Smaller margins on mobile */
+}
+
+.row {
+    display: flex;
+    flex-direction: column; /* Stack columns on mobile */
+    gap: 10px; /* Smaller gap on mobile */
+}
+
+.col-1, .col-2, .col-3 {
+    flex: 1; /* Each column takes full width by default on mobile */
+}
+
+/* Add more mobile-specific styles for your elements here */
+
+/* Media query for tablets (min-width: 768px) */
+@media (min-width: 768px) {
+    nav ul {
+        flex-direction: row; /* Display navigation items horizontally on tablets */
+        justify-content: center;
+    }
+
+    nav ul li a {
+        width: auto; /* Allow links to size based on content */
+        padding: 1em;
+    }
+
+    .container {
+        max-width: 960px; /* Example max width for tablets */
+        margin: 20px auto;
+    }
+
+    .row {
+        flex-direction: row; /* Display columns horizontally on tablets */
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .col-1 { flex-basis: calc(33.33% - 20px); } /* Example: 3 columns on tablet */
+    .col-2 { flex-basis: calc(66.66% - 20px); } /* Example: 2 columns on tablet */
+    .col-3 { flex-basis: calc(100% - 20px); } /* Example: Full width on tablet */
+
+    /* Add more tablet-specific styles here */
+}
+
+/* Media query for desktops (min-width: 1200px) */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1200px; /* Example max width for desktops */
+    }
+
+    /* You might adjust column widths or other styles for desktops */
+    /* For example, keeping the same column structure or making adjustments */
+    /* Add more desktop-specific styles here */
+}
+        @media (max-width: 420px) {
+  .nav-wrapper .secondary-button {
+    border: 0;
+    margin: 16px 0 0;
+    margin-inline-end: 0;
+    padding-bottom: 16px;
+    padding-top: 16px;
+  }
+}
+
+/* Fixed nav. */
+@media (min-width: 240px) and (max-width: 420px) and
+       (min-height: 401px),
+       (min-width: 421px) and (min-height: 240px) and
+       (max-height: 560px) {
+  body .nav-wrapper {
+    background: var(--background-color);
+    bottom: 0;
+    box-shadow: 0 -12px 24px var(--background-color);
+    left: 0;
+    margin: 0 auto;
+    max-width: 736px;
+    padding-inline-end: 24px;
+    padding-inline-start: 24px;
+    position: fixed;
+    right: 0;
+    width: 100%;
+    z-index: 2;
+  }
+
+  .interstitial-wrapper {
+    max-width: 736px;
+  }
+
+  #details,
+  #main-content {
+    padding-bottom: 40px;
+  }
+
+  #details {
+    padding-top: 5.5vh;
+  }
+
+  button.small-link {
+    color: var(--google-blue-600);
+  }
+}
+
+@media (max-width: 420px) and (orientation: portrait),
+       (max-height: 560px) {
+  body {
+    margin: 0 auto;
+  }
+
+  button,
+  [dir='rtl'] button,
+  button.small-link,
+  .nav-wrapper .secondary-button {
+    font-family: Roboto-Regular,Helvetica;
+    font-size: .933em;
+    margin: 6px 0;
+    transform: translatez(0);
+  }
+
+  .nav-wrapper {
+    box-sizing: border-box;
+    padding-bottom: 8px;
+    width: 100%;
+  }
+
+  #details {
+    box-sizing: border-box;
+    height: auto;
+    margin: 0;
+    opacity: 1;
+    transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  #details.hidden,
+  #main-content.hidden {
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding-bottom: 0;
+    transition: none;
+  }
+
+  h1 {
+    font-size: 1.5em;
+    margin-bottom: 8px;
+  }
+
+  .icon {
+    margin-bottom: 5.69vh;
+  }
+
+  .interstitial-wrapper {
+    box-sizing: border-box;
+    margin: 7vh auto 12px;
+    padding: 0 24px;
+    position: relative;
+  }
+
+  .interstitial-wrapper p {
+    font-size: .95em;
+    line-height: 1.61em;
+    margin-top: 8px;
+  }
+
+  #main-content {
+    margin: 0;
+    transition: opacity 100ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .small-link {
+    border: 0;
+  }
+
+  .suggested-left > #control-buttons,
+  .suggested-right > #control-buttons {
+    float: none;
+    margin: 0;
+  }
+}
+
+@media (min-width: 421px) and (min-height: 500px) and (max-height: 560px) {
+  .interstitial-wrapper {
+    margin-top: 10vh;
+  }
+}
+
+@media (min-height: 400px) and (orientation:portrait) {
+  .interstitial-wrapper {
+    margin-bottom: 145px;
+  }
+}
+
+@media (min-height: 299px) {
+  .nav-wrapper {
+    padding-bottom: 16px;
+  }
+}
+
+@media (max-height: 560px) and (min-height: 240px) and (orientation:landscape) {
+  .extended-reporting-has-checkbox #details {
+    padding-bottom: 80px;
+  }
+}
+
+@media (min-height: 500px) and (max-height: 650px) and (max-width: 414px) and
+       (orientation: portrait) {
+  .interstitial-wrapper {
+    margin-top: 7vh;
+  }
+}
+
+@media (min-height: 650px) and (max-width: 414px) and (orientation: portrait) {
+  .interstitial-wrapper {
+    margin-top: 10vh;
+  }
+}
+
+/* Small mobile screens. No fixed nav. */
+@media (max-height: 400px) and (orientation: portrait),
+       (max-height: 239px) and (orientation: landscape),
+       (max-width: 419px) and (max-height: 399px) {
+  .interstitial-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+  }
+
+  #details {
+    flex: 1 1 auto;
+    order: 0;
+  }
+
+  #main-content {
+    flex: 1 1 auto;
+    order: 0;
+  }
+
+  .nav-wrapper {
+    flex: 0 1 auto;
+    margin-top: 8px;
+    order: 1;
+    padding-inline-end: 0;
+    padding-inline-start: 0;
+    position: relative;
+    width: 100%;
+  }
+
+  button,
+  .nav-wrapper .secondary-button {
+    padding: 16px 24px;
+  }
+
+  button.small-link {
+    color: var(--google-blue-600);
+  }
+}
+
+@media (max-width: 239px) and (orientation: portrait) {
+  .nav-wrapper {
+    padding-inline-end: 0;
+    padding-inline-start: 0;
+  }
+}
         body {
             display: flex;
             justify-content: center;
@@ -358,21 +717,21 @@
         // Constants
         const BIRD_SIZE = 40;
         const POWERUP_SIZE = 30;
-        const VERTICAL_GAP = 140; // Matches max jump height (~94px) + bird size (40px) + margin
-        const PIPE_WIDTHS = [50, 70, 80];
-        const MIN_HORIZONTAL_GAP = 250;
+        const VERTICAL_GAP = 152; // Matches max jump height (~94px) + bird size (40px) + margin
+        const PIPE_WIDTHS = [50, 60, 70];
+        const MIN_HORIZONTAL_GAP = 200;
         const MAX_HORIZONTAL_GAP = 300;
 
         // Game Settings
         const levels = {
-            easy: { gravity: 0.6, jump: -10, baseSpeed: 3.0, pipeFreq: 1800, powerUpChance: 0.15 },
-            medium: { gravity: 0.7, jump: -11, baseSpeed: 4.0, pipeFreq: 1500, powerUpChance: 0.20 },
-            hard: { gravity: 0.8, jump: -12, baseSpeed: 5.0, pipeFreq: 1200, powerUpChance: 0.25 },
-            nightmare: { gravity: 0.9, jump: -13, baseSpeed: 6.0, pipeFreq: 1000, powerUpChance: 0.30 }
+            easy: { gravity: 0.6, jump: -10, baseSpeed: 9889889.0, pipeFreq: 100, powerUpChance: 0.15 },
+            medium: { gravity: 0.7, jump: -11, baseSpeed: 98989889.0, pipeFreq: 50, powerUpChance: 0.20 },
+            hard: { gravity: 0.8, jump: -12, baseSpeed: 9898989889.0, pipeFreq: 20, powerUpChance: 0.25 },
+            nightmare: { gravity: 0.9, jump: -13, baseSpeed: 989898989898.0, pipeFreq: 5, powerUpChance: 0.30 }
         };
 
         // Utility Functions
-        const GAME_WIDTH = () => gameContainer.clientWidth;
+        const GAME_WIDTH = () => gameContainer.clientWidth;        
         const GAME_HEIGHT = () => gameContainer.clientHeight;
 
         // Local Storage & UI Updates
