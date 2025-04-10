@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta content='Play the classic Flappy Bird game online for free. Choose your difficulty: Easy, Medium, Hard, or Nightmare.' name='description'/>
+    <meta name="description" content="Play the classic Flappy Bird game online for free. Choose your difficulty: Easy, Medium, Hard, or Nightmare.">
     <title>Flappy Bird</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -29,47 +29,46 @@
         }
 
         #game-container {
-            width: 90vw;
-            max-width: 800px;
-            height: 67.5vw;
-            max-height: 600px;
             position: relative;
+            width: 100%;
+            max-width: 800px;
+            aspect-ratio: 4 / 3; /* Maintains 4:3 ratio */
+            max-height: 90vh; /* Caps height based on viewport */
             overflow: hidden;
-            border: 10px solid #5a4b3c;
-            border-radius: 20px;
+            border: 8px solid #5a4b3c;
+            border-radius: 15px;
             background: url('background.jpg') no-repeat center/cover;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 0 15px rgba(0,0,0,0.2);
-            transition: background-color 3s ease-in-out;
-            touch-action: manipulation; /* Improves touch responsiveness */
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3), inset 0 0 10px rgba(0,0,0,0.2);
+            touch-action: manipulation;
         }
 
         /* --- Bird --- */
         #bird {
-            width: 40px;
-            height: 40px;
-            background: url('bird.png') no-repeat center center;
-            background-size: contain;
             position: absolute;
+            width: 5%;
+            height: 5%;
+            min-width: 30px;
+            min-height: 30px;
+            background: url('bird.png') no-repeat center/contain;
             left: 25%;
-            top: 46.67%;
+            top: 50%;
             transition: transform 0.1s ease-out;
             z-index: 5;
         }
-
         #bird.invincible {
-            box-shadow: 0 0 20px 10px rgba(255, 255, 0, 0.7);
+            box-shadow: 0 0 15px 8px rgba(255, 255, 0, 0.7);
             animation: invinciblePulse 1s infinite;
         }
 
         /* --- Pipes --- */
         .pipe {
             background: linear-gradient(90deg, var(--pipe-start), var(--pipe-end));
-            border: 3px solid var(--pipe-border);
-            border-radius: 10px;
+            border: 2px solid var(--pipe-border);
+            border-radius: 8px;
             position: absolute;
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 2px 2px 5px rgba(0, 0, 0, 0.3);
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4), 1px 1px 4px rgba(0, 0, 0, 0.2);
             z-index: 2;
-            animation: slideIn 0.5s ease-out; /* Subtle slide-in animation */
+            animation: slideIn 0.3s ease-out;
         }
         .pipe-top::before,
         .pipe-bottom::before {
@@ -77,22 +76,16 @@
             position: absolute;
             left: 0;
             width: 100%;
-            height: 20px;
+            height: 5%;
             background: linear-gradient(to bottom, var(--pipe-cap-start), var(--pipe-start));
-            border: 3px solid var(--pipe-border);
-            border-radius: 8px 8px 0 0;
+            border: 2px solid var(--pipe-border);
+            border-radius: 6px 6px 0 0;
         }
-        .pipe-top::before {
-            top: -23px;
-        }
-        .pipe-bottom::before {
-            bottom: -23px;
-            border-radius: 0 0 8px 8px;
-        }
+        .pipe-top::before { top: -5%; }
+        .pipe-bottom::before { bottom: -5%; border-radius: 0 0 6px 6px; }
 
-        /* Difficulty-specific pipe colors */
         :root {
-            --pipe-start: #ff6666; /* Easy */
+            --pipe-start: #ff6666;
             --pipe-end: #ff3333;
             --pipe-cap-start: #ff9999;
             --pipe-border: #800000;
@@ -101,41 +94,35 @@
         body.hard .pipe { --pipe-start: #ff3333; --pipe-end: #b30000; --pipe-cap-start: #ff6666; }
         body.nightmare .pipe { --pipe-start: #cc0000; --pipe-end: #990000; --pipe-cap-start: #ff3333; }
 
-        /* --- Other Elements --- */
-        .cloud { /* Unchanged */ }
-        .power-up { /* Unchanged */ }
-        .trail { /* Unchanged */ }
-
+        /* --- UI Elements --- */
         #score, #scoreboard {
             position: absolute;
-            top: 20px;
+            top: 2%;
             font-family: 'Press Start 2P', cursive;
-            font-size: clamp(16px, 3vw, 24px);
+            font-size: clamp(12px, 2.5vw, 20px);
             color: white;
-            text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 3px 3px 5px rgba(0,0,0,0.7);
+            text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
             z-index: 10;
         }
-        #score { left: 20px; }
-        #scoreboard { right: 150px; }
+        #score { left: 2%; }
+        #scoreboard { right: 15%; }
 
         #pause-button {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            font-family: 'Poppins', sans-serif;
-            font-size: clamp(12px, 2.5vw, 16px);
-            color: white;
+            top: 2%;
+            right: 2%;
+            font-size: clamp(10px, 2vw, 14px);
+            padding: 0.5em 1em;
             background: linear-gradient(45deg, #ff6b6b, #f0935d);
             border: none;
-            border-radius: 8px;
-            padding: 8px 18px;
+            border-radius: 6px;
+            color: white;
             cursor: pointer;
             z-index: 10;
-            transition: transform 0.2s ease, filter 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease;
         }
-        #pause-button:hover { transform: scale(1.05); filter: brightness(1.1); }
-        #pause-button:active { transform: scale(0.98); filter: brightness(0.95); }
+        #pause-button:hover, #pause-button:focus { transform: scale(1.05); }
+        #pause-button:active { transform: scale(0.95); }
 
         /* --- Screens --- */
         #start-screen, #game-over-screen, #pause-screen {
@@ -143,80 +130,104 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 20;
-            overflow-y: auto;
-            padding: 20px;
+            padding: 5%;
             box-sizing: border-box;
-            text-align: center;
             color: white;
+            text-align: center;
         }
         #pause-screen, #game-over-screen { display: none; }
 
         #start-screen h2, #game-over-screen h2, #pause-screen h2 {
             font-family: 'Press Start 2P', cursive;
-            font-size: clamp(24px, 5vw, 36px);
-            margin: 10px 0;
-            padding: 10px;
-            text-shadow: 3px 3px 0 #000, -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 5px 5px 8px rgba(0,0,0,0.7);
+            font-size: clamp(18px, 4vw, 28px);
+            margin: 2% 0;
+            padding: 2%;
+            text-shadow: 2px 2px 0 #000, -2px -2px 0 #000;
             width: 90%;
             animation: color-cycle 10s infinite linear;
-            z-index: 21;
         }
+
+        #leaderboard, #achievements, #tips, #final-score, #pause-score {
+            font-size: clamp(10px, 2vw, 16px);
+            margin: 2% 0;
+            width: 90%;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        #leaderboard h3, #achievements h3 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: clamp(12px, 2.2vw, 18px);
+            margin-bottom: 1%;
+        }
+        #tips { line-height: 1.4; }
 
         /* --- Buttons --- */
         .button {
-            padding: 12px 28px;
-            margin: 10px 5px;
-            font-size: clamp(14px, 3vw, 18px);
+            padding: 0.8em 1.5em;
+            margin: 1% 0.5%;
+            font-size: clamp(12px, 2.5vw, 16px);
             font-family: 'Poppins', sans-serif;
             font-weight: 600;
             border: none;
-            border-radius: 50px;
-            cursor: pointer;
+            border-radius: 25px;
             background: linear-gradient(45deg, #ff6b6b, #f0935d);
             color: white;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            display: inline-block;
-            -webkit-appearance: none;
-            appearance: none;
-            outline: none;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
         }
         .button:hover, .button:focus {
-            transform: translateY(-2px) scale(1.03);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.3);
         }
-        .button:active {
-            transform: translateY(0px) scale(0.98);
+        .button:active { transform: scale(0.98); }
+
+        /* --- Notification --- */
+        #notification {
+            position: absolute;
+            top: 1%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 215, 0, 0.95);
+            color: #333;
+            padding: 0.5em 1em;
+            border-radius: 10px;
+            font-size: clamp(10px, 2vw, 16px);
+            z-index: 50;
+            display: none;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            filter: brightness(0.95);
         }
 
         /* --- Animations --- */
         @keyframes slideIn {
-            from { transform: translateX(50px); opacity: 0; }
+            from { transform: translateX(20px); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
-        @keyframes powerupPulse { /* Unchanged */ }
-        @keyframes fadeOut { /* Unchanged */ }
-        @keyframes color-cycle { /* Unchanged */ }
-        @keyframes invinciblePulse { /* Unchanged */ }
+        @keyframes invinciblePulse {
+            0% { box-shadow: 0 0 15px 8px rgba(255, 255, 0, 0.7); }
+            50% { box-shadow: 0 0 20px 10px rgba(255, 255, 100, 0.9); }
+            100% { box-shadow: 0 0 15px 8px rgba(255, 255, 0, 0.7); }
+        }
+        @keyframes color-cycle {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
 
-        /* --- Responsive Design --- */
-        @media (max-width: 480px) {
-            #score, #scoreboard { font-size: 14px; }
-            #pause-button { padding: 6px 12px; font-size: 12px; }
-            .button { padding: 10px 20px; font-size: 13px; }
-            #start-screen h2, #game-over-screen h2, #pause-screen h2 { font-size: 20px; }
+        /* --- Media Queries --- */
+        @media (max-width: 600px) {
+            #game-container { border-width: 5px; }
+            #bird { min-width: 25px; min-height: 25px; }
+            #score, #scoreboard { font-size: clamp(10px, 2vw, 14px); }
+            #pause-button { padding: 0.4em 0.8em; font-size: clamp(8px, 1.8vw, 12px); }
+            .button { padding: 0.6em 1.2em; font-size: clamp(10px, 2vw, 14px); }
+            #start-screen h2, #game-over-screen h2, #pause-screen h2 { font-size: clamp(16px, 3.5vw, 24px); }
         }
     </style>
 </head>
@@ -232,14 +243,14 @@
             <h2>Flappy Bird</h2>
             <div id="leaderboard">Loading High Scores...</div>
             <div id="achievements">Loading Achievements...</div>
-            <div id="tips">Controls: Spacebar, Mouse Click, or Touch to jump. Ctrl+P or Esc to pause/resume. Avoid pipes! Collect yellow power-ups for temporary invincibility!</div>
+            <div id="tips">Controls: Spacebar, Click, or Tap to jump. Ctrl+P or Esc to pause/resume. Avoid pipes!</div>
             <div class="button-group">
                 <button class="button" id="easy-btn" onclick="startGame('easy')" tabindex="0">Easy</button>
                 <button class="button" id="medium-btn" onclick="startGame('medium')" tabindex="0">Medium</button>
                 <button class="button" id="hard-btn" onclick="startGame('hard')" tabindex="0">Hard</button>
                 <button class="button" id="nightmare-btn" onclick="startGame('nightmare')" style="display: none;" tabindex="0">Nightmare</button>
             </div>
-            <button class="button" onclick="resetHighScores()" style="background: linear-gradient(45deg, #888, #666); margin-top: 20px;" tabindex="0">Reset Scores</button>
+            <button class="button" onclick="resetHighScores()" style="background: linear-gradient(45deg, #888, #666);" tabindex="0">Reset Scores</button>
         </div>
 
         <div id="pause-screen" role="dialog" aria-label="Pause Menu">
@@ -289,35 +300,19 @@
         const powerUpSound = document.getElementById('power-up-sound');
         const bgMusic = document.getElementById('bg-music');
 
-        let birdY = 280;
-        let velocity = 0;
-        let score = 0;
-        let pipeCount = 0;
-        let pipes = [];
-        let clouds = [];
-        let powerUps = [];
-        let trails = [];
-        let gameOver = false;
-        let gameStarted = false;
-        let isPaused = false;
-        let levelConfig = {};
-        let pipeSpawnInterval;
-        let cloudSpawnInterval;
-        let powerUpSpawnInterval;
-        let gameLoopId;
-        let multiplier = 1;
-        let isTutorial = !localStorage.getItem('hasPlayed');
-        let lastMilestoneScore = 0;
-        let isInvincible = false;
-        let invincibilityTimer = null;
+        let birdY, velocity = 0, score = 0, pipeCount = 0;
+        let pipes = [], clouds = [], powerUps = [], trails = [];
+        let gameOver = false, gameStarted = false, isPaused = false;
+        let levelConfig = {}, pipeSpawnInterval, cloudSpawnInterval, powerUpSpawnInterval, gameLoopId;
+        let multiplier = 1, isTutorial = !localStorage.getItem('hasPlayed'), lastMilestoneScore = 0;
+        let isInvincible = false, invincibilityTimer = null;
 
-        const BIRD_SIZE = 40;
+        const BIRD_SIZE = () => Math.max(gameContainer.clientWidth * 0.05, 30);
         const POWERUP_SIZE = 30;
         const PIPE_WIDTHS = [50, 60, 70];
-        const MIN_HORIZONTAL_GAP = 250;
-        const MAX_HORIZONTAL_GAP = 350;
+        const MIN_HORIZONTAL_GAP = 200;
+        const MAX_HORIZONTAL_GAP = 300;
 
-        // Updated levels with decreasing verticalGap and slightly increasing baseSpeed
         const levels = {
             easy:      { gravity: 0.6, jump: -10, baseSpeed: 3.0, pipeFreq: 2000, powerUpChance: 0.15, verticalGap: 180 },
             medium:    { gravity: 0.7, jump: -11, baseSpeed: 3.5, pipeFreq: 1800, powerUpChance: 0.20, verticalGap: 160 },
@@ -338,7 +333,7 @@
         }
 
         function resetHighScores() {
-            if (confirm("Are you sure you want to reset all scores and achievements?")) {
+            if (confirm("Reset all scores and achievements?")) {
                 highScores = { easy: 0, medium: 0, hard: 0, nightmare: 0 };
                 achievements = [];
                 localStorage.setItem('flappyHighScores', JSON.stringify(highScores));
@@ -346,14 +341,14 @@
                 localStorage.removeItem('hasPlayed');
                 isTutorial = true;
                 updateLeaderboard();
-                showNotification("Scores and Achievements Reset!");
+                showNotification("Scores Reset!");
             }
         }
 
         function showNotification(message) {
             notification.textContent = message;
             notification.style.display = 'block';
-            if (notification.timeoutId) clearTimeout(notification.timeoutId);
+            clearTimeout(notification.timeoutId);
             notification.timeoutId = setTimeout(() => {
                 notification.style.display = 'none';
                 notification.timeoutId = null;
@@ -364,8 +359,8 @@
             if (!levels[level]) return;
 
             levelConfig = { ...levels[level], name: level };
-            document.body.className = level; // Set difficulty class for pipe colors
-            birdY = GAME_HEIGHT() * 0.4667;
+            document.body.className = level;
+            birdY = GAME_HEIGHT() * 0.5;
             velocity = 0;
             score = 0;
             pipeCount = 0;
@@ -388,7 +383,6 @@
             startScreen.style.display = 'none';
             gameOverScreen.style.display = 'none';
             pauseScreen.style.display = 'none';
-            pauseButton.textContent = 'Pause';
             pauseButton.style.display = 'block';
 
             clearInterval(pipeSpawnInterval);
@@ -401,7 +395,7 @@
             powerUpSpawnInterval = setInterval(spawnPowerUp, 4000);
 
             bgMusic.currentTime = 0;
-            bgMusic.play().catch(e => console.warn('Background music autoplay failed:', e));
+            bgMusic.play().catch(() => {});
 
             gameLoop();
 
@@ -412,15 +406,14 @@
         }
 
         function clearGameElements() {
-            pipes.forEach(pipe => pipe.element.remove());
+            pipes.forEach(p => p.element.remove());
             pipes = [];
-            clouds.forEach(cloud => cloud.element.remove());
+            clouds.forEach(c => c.element.remove());
             clouds = [];
             powerUps.forEach(p => p.element.remove());
             powerUps = [];
             trails.forEach(t => t.remove());
             trails = [];
-            gameContainer.querySelectorAll('.pipe, .cloud, .power-up, .trail').forEach(el => el.remove());
         }
 
         function updateBird() {
@@ -431,30 +424,26 @@
             velocity += dynamicGravity;
             birdY += velocity;
 
-            birdY = Math.max(0, Math.min(birdY, gameHeight - BIRD_SIZE));
+            birdY = Math.max(0, Math.min(birdY, gameHeight - BIRD_SIZE()));
             bird.style.top = birdY + 'px';
 
             const rotation = Math.max(-30, Math.min(velocity * 3, 90));
             bird.style.transform = `rotate(${rotation}deg)`;
 
-            if (birdY <= 0 || birdY >= gameHeight - BIRD_SIZE) {
-                endGame();
-                return;
-            }
-
+            if (birdY <= 0 || birdY >= gameHeight - BIRD_SIZE()) endGame();
             if (Math.random() < 0.15) createTrail();
         }
 
         function createTrail() {
             if (trails.length > 10) {
-                const oldestTrail = trails.shift();
-                if (oldestTrail) oldestTrail.remove();
+                const oldest = trails.shift();
+                oldest?.remove();
             }
 
             const trail = document.createElement('div');
             trail.className = 'trail';
-            trail.style.left = (bird.offsetLeft + BIRD_SIZE / 2 - 4) + 'px';
-            trail.style.top = (bird.offsetTop + BIRD_SIZE / 2 - 4) + 'px';
+            trail.style.left = (bird.offsetLeft + BIRD_SIZE() / 2 - 4) + 'px';
+            trail.style.top = (bird.offsetTop + BIRD_SIZE() / 2 - 4) + 'px';
             gameContainer.appendChild(trail);
             trails.push(trail);
 
@@ -471,20 +460,19 @@
             const gameHeight = GAME_HEIGHT();
             const gameWidth = GAME_WIDTH();
             const pipeWidth = PIPE_WIDTHS[Math.floor(Math.random() * PIPE_WIDTHS.length)];
-            const currentVerticalGap = levelConfig.verticalGap; // Now varies by level
+            const currentVerticalGap = levelConfig.verticalGap;
 
-            const minTopHeight = 50;
+            const minTopHeight = gameHeight * 0.1;
             const maxTopHeight = gameHeight - currentVerticalGap - minTopHeight;
             const topPipeHeight = Math.floor(Math.random() * (maxTopHeight - minTopHeight)) + minTopHeight;
             const bottomPipeHeight = gameHeight - topPipeHeight - currentVerticalGap;
 
             let startX = gameWidth;
-            if (pipes.length > 0) {
+            if (pipes.length) {
                 const lastPipe = pipes[pipes.length - 1];
-                const lastPairX = lastPipe.x;
                 const complexityFactor = Math.min(score / 100, 0.5);
                 const horizontalGap = MIN_HORIZONTAL_GAP + (Math.random() * (MAX_HORIZONTAL_GAP - MIN_HORIZONTAL_GAP) * (1 - complexityFactor));
-                startX = Math.max(startX, lastPairX + pipeWidth + horizontalGap);
+                startX = Math.max(startX, lastPipe.x + pipeWidth + horizontalGap);
             }
 
             const topPipe = document.createElement('div');
@@ -492,7 +480,7 @@
             topPipe.style.height = topPipeHeight + 'px';
             topPipe.style.width = pipeWidth + 'px';
             topPipe.style.left = startX + 'px';
-            topPipe.style.top = '0px';
+            topPipe.style.top = '0';
             gameContainer.appendChild(topPipe);
             pipes.push({ element: topPipe, x: startX, y: 0, height: topPipeHeight, width: pipeWidth, isTop: true, passed: false });
 
@@ -501,8 +489,8 @@
             bottomPipe.style.height = bottomPipeHeight + 'px';
             bottomPipe.style.width = pipeWidth + 'px';
             bottomPipe.style.left = startX + 'px';
-            bottomPipe.style.bottom = '0px';
-            gameContainer.appendChild(bottomPipe); // Fixed typo: customPipe -> bottomPipe
+            bottomPipe.style.bottom = '0';
+            gameContainer.appendChild(bottomPipe); // Fixed: bottomPipe
             const bottomPipeY = gameHeight - bottomPipeHeight;
             pipes.push({ element: bottomPipe, x: startX, y: bottomPipeY, height: bottomPipeHeight, width: pipeWidth, isTop: false, passed: false });
         }
@@ -512,18 +500,18 @@
 
             const cloud = document.createElement('div');
             cloud.className = 'cloud';
-            const gameWidth = GAME_WIDTH();
-            cloud.style.left = gameWidth + 'px';
+            cloud.style.width = '60px';
+            cloud.style.height = '30px';
+            cloud.style.background = 'linear-gradient(to bottom, #f8f9fa, #e9ecef)';
+            cloud.style.borderRadius = '15px';
+            cloud.style.left = GAME_WIDTH() + 'px';
             cloud.style.top = (Math.random() * (GAME_HEIGHT() * 0.6)) + 'px';
-            const scale = 0.8 + Math.random() * 0.7;
-            cloud.style.transform = `scale(${scale})`;
             cloud.style.opacity = 0.5 + Math.random() * 0.3;
             gameContainer.appendChild(cloud);
-            clouds.push({ element: cloud, x: gameWidth, speedFactor: 0.3 + Math.random() * 0.4 });
+            clouds.push({ element: cloud, x: GAME_WIDTH(), speedFactor: 0.3 + Math.random() * 0.4 });
         }
 
         function doesYOverlapWithPipes(yPosition, targetX) {
-            const powerUpRadius = POWERUP_SIZE / 2;
             const powerUpTop = yPosition;
             const powerUpBottom = yPosition + POWERUP_SIZE;
 
@@ -538,7 +526,7 @@
         }
 
         function spawnPowerUp() {
-            if (!gameStarted || gameOver || isPaused || powerUps.length > 0 || Math.random() > levelConfig.powerUpChance) return;
+            if (!gameStarted || gameOver || isPaused || powerUps.length || Math.random() > levelConfig.powerUpChance) return;
 
             const gameHeight = GAME_HEIGHT();
             const gameWidth = GAME_WIDTH();
@@ -547,20 +535,21 @@
             const maxY = gameHeight * 0.8 - POWERUP_SIZE;
 
             let attempts = 0;
-            const maxAttempts = 5;
-
-            while (attempts < maxAttempts) {
+            while (attempts++ < 5) {
                 const spawnY = Math.random() * (maxY - minY) + minY;
                 if (!doesYOverlapWithPipes(spawnY, spawnX)) {
                     const powerUp = document.createElement('div');
                     powerUp.className = 'power-up';
+                    powerUp.style.width = POWERUP_SIZE + 'px';
+                    powerUp.style.height = POWERUP_SIZE + 'px';
+                    powerUp.style.background = 'radial-gradient(circle, #ffd700, #ffa500)';
+                    powerUp.style.borderRadius = '50%';
                     powerUp.style.left = spawnX + 'px';
                     powerUp.style.top = spawnY + 'px';
                     gameContainer.appendChild(powerUp);
                     powerUps.push({ element: powerUp, x: spawnX, y: spawnY, type: 'invincible' });
                     return;
                 }
-                attempts++;
             }
         }
 
@@ -574,7 +563,7 @@
 
             const birdRect = bird.getBoundingClientRect();
             const gameRect = gameContainer.getBoundingClientRect();
-            const birdRadius = BIRD_SIZE * 0.4;
+            const birdRadius = BIRD_SIZE() * 0.4;
             const birdCenterX = (birdRect.left - gameRect.left) + birdRect.width / 2;
             const birdCenterY = (birdRect.top - gameRect.top) + birdRect.height / 2;
 
@@ -592,21 +581,19 @@
                     pipe.passed = true;
                     const bottomPipe = pipes.find(p => p.x === pipe.x && !p.isTop);
                     if (bottomPipe) bottomPipe.passed = true;
-
                     pipeCount++;
                     multiplier = pipeCount >= 50 ? 4 : pipeCount >= 25 ? 3 : pipeCount >= 10 ? 2 : 1;
                     score += multiplier;
 
-                    if (score > 0 && score >= lastMilestoneScore + 100) {
+                    if (score >= lastMilestoneScore + 100) {
                         lastMilestoneScore = Math.floor(score / 100) * 100;
-                        showNotification(`Score Milestone: ${lastMilestoneScore}!`);
+                        showNotification(`Milestone: ${lastMilestoneScore}!`);
                     }
 
                     scoreDisplay.textContent = `Score: ${score}`;
                     scoreboard.textContent = `Pipes: ${pipeCount}`;
-                    pipeSound.play().catch(e => console.warn('Pipe sound failed:', e));
+                    pipeSound.play().catch(() => {});
                     checkAchievements();
-                    updateBackground();
                 }
 
                 if (pipe.x + pipe.width < 0) {
@@ -619,8 +606,7 @@
                 const cloud = clouds[i];
                 cloud.x -= dynamicSpeed * cloud.speedFactor;
                 cloud.element.style.left = cloud.x + 'px';
-                const cloudWidth = cloud.element.offsetWidth;
-                if (cloud.x + cloudWidth < 0) {
+                if (cloud.x + cloud.element.offsetWidth < 0) {
                     cloud.element.remove();
                     clouds.splice(i, 1);
                 }
@@ -633,12 +619,10 @@
 
                 const powerUpCenterX = powerUp.x + POWERUP_SIZE / 2;
                 const powerUpCenterY = powerUp.y + POWERUP_SIZE / 2;
-                const dx = birdCenterX - powerUpCenterX;
-                const dy = birdCenterY - powerUpCenterY;
-                const distance = Math.sqrt(dx * dx + dy * dy);
+                const distance = Math.sqrt((birdCenterX - powerUpCenterX) ** 2 + (birdCenterY - powerUpCenterY) ** 2);
 
                 if (distance < birdRadius + POWERUP_SIZE / 2) {
-                    powerUpSound.play().catch(e => console.warn('Power-up sound failed:', e));
+                    powerUpSound.play().catch(() => {});
                     applyPowerUp(powerUp.type);
                     powerUp.element.remove();
                     powerUps.splice(i, 1);
@@ -652,9 +636,7 @@
         function checkCollision(birdX, birdY, birdR, pipe) {
             const closestX = Math.max(pipe.x, Math.min(birdX, pipe.x + pipe.width));
             const closestY = Math.max(pipe.y, Math.min(birdY, pipe.y + pipe.height));
-            const distX = birdX - closestX;
-            const distY = birdY - closestY;
-            const distanceSquared = (distX * distX) + (distY * distY);
+            const distanceSquared = (birdX - closestX) ** 2 + (birdY - closestY) ** 2;
             return distanceSquared < (birdR * birdR);
         }
 
@@ -667,7 +649,7 @@
                 invincibilityTimer = setTimeout(() => {
                     isInvincible = false;
                     bird.classList.remove('invincible');
-                    showNotification("Invincibility Wore Off!");
+                    showNotification("Invincibility Ended!");
                     invincibilityTimer = null;
                 }, 5000);
             }
@@ -684,14 +666,7 @@
             };
 
             if (pipeCount >= 10) achieve('First 10 Pipes');
-            if (pipeCount >= 25) achieve('25 Pipes');
-            if (pipeCount >= 50) achieve('Pipe Master (50)');
-            if (pipeCount >= 100) achieve('Pipe Century (100)');
             if (score >= 50) achieve('Score 50+');
-            if (score >= 100) achieve('Score 100+');
-            if (score >= 200) achieve('Score 200+');
-            if (levelConfig.name === 'hard' && score >= 30) achieve('Hard Mode Pro');
-            if (levelConfig.name === 'nightmare' && pipeCount >= 1) achieve('Facing the Nightmare');
             if (levelConfig.name === 'nightmare' && score >= 25) achieve('Nightmare Survivor');
 
             if (newAchievement) {
@@ -700,15 +675,10 @@
             }
         }
 
-        function updateBackground() {
-            const hue = (score * 5) % 360;
-            gameContainer.style.backgroundColor = `hsl(${hue}, 60%, 70%)`;
-        }
-
         function jump() {
             if (!gameStarted || gameOver || isPaused) return;
             velocity = levelConfig.jump;
-            jumpSound.play().catch(e => console.warn('Jump sound failed:', e));
+            jumpSound.play().catch(() => {});
             bird.style.transform = `rotate(-30deg)`;
         }
 
@@ -716,22 +686,19 @@
             if (e.code === 'Space' || e.code === 'ArrowUp') {
                 e.preventDefault();
                 jump();
-            } else if ((e.ctrlKey || e.metaKey) && e.code === 'KeyP') {
+            } else if ((e.ctrlKey || e.metaKey) && e.code === 'KeyP' || e.code === 'Escape') {
                 e.preventDefault();
-                togglePause();
-            } else if (e.code === 'Escape' && gameStarted && !gameOver) {
-                e.preventDefault();
-                togglePause();
+                if (gameStarted && !gameOver) togglePause();
             }
         });
 
-        function gameLoop(timestamp) {
+        function gameLoop() {
             if (gameOver) return;
             if (!isPaused) {
                 updateBird();
                 if (!gameOver) updateObstacles();
             }
-            if (!gameOver) gameLoopId = requestAnimationFrame(gameLoop);
+            gameLoopId = requestAnimationFrame(gameLoop);
         }
 
         function togglePause() {
@@ -749,7 +716,7 @@
                 clearInterval(powerUpSpawnInterval);
                 if (invincibilityTimer) clearTimeout(invincibilityTimer);
             } else {
-                bgMusic.play().catch(e => console.warn('BG music resume failed:', e));
+                bgMusic.play().catch(() => {});
                 pipeSpawnInterval = setInterval(createPipePair, levelConfig.pipeFreq);
                 cloudSpawnInterval = setInterval(createCloud, 5000);
                 powerUpSpawnInterval = setInterval(spawnPowerUp, 4000);
@@ -771,7 +738,7 @@
             clearInterval(powerUpSpawnInterval);
             cancelAnimationFrame(gameLoopId);
 
-            gameOverSound.play().catch(e => console.warn('Game over sound failed:', e));
+            gameOverSound.play().catch(() => {});
             bgMusic.pause();
 
             gameOverScreen.style.display = 'flex';
@@ -783,7 +750,7 @@
                 highScores[currentLevel] = score;
                 localStorage.setItem('flappyHighScores', JSON.stringify(highScores));
                 updateLeaderboard();
-                showNotification(`New High Score for ${currentLevel.charAt(0).toUpperCase() + currentLevel.slice(1)}!`);
+                showNotification(`New High Score: ${currentLevel}!`);
             }
         }
 
@@ -791,37 +758,27 @@
             gameOverScreen.style.display = 'none';
             pauseScreen.style.display = 'none';
             cancelAnimationFrame(gameLoopId);
-            const levelName = levelConfig.name;
-            if (levelName && levels[levelName]) startGame(levelName);
-            else {
-                quitToMenu();
-                showNotification("Error restarting. Returning to menu.");
-            }
+            startGame(levelConfig.name || 'easy');
         }
 
         function quitToMenu() {
-            if (gameStarted || isPaused || gameOver) {
-                gameOver = true;
-                gameStarted = false;
-                isPaused = false;
-                isInvincible = false;
-                if (invincibilityTimer) clearTimeout(invincibilityTimer);
-                bird.classList.remove('invincible');
-                cancelAnimationFrame(gameLoopId);
-                clearInterval(pipeSpawnInterval);
-                clearInterval(cloudSpawnInterval);
-                clearInterval(powerUpSpawnInterval);
-                bgMusic.pause();
-                bgMusic.currentTime = 0;
-            }
+            gameOver = true;
+            gameStarted = false;
+            isPaused = false;
+            isInvincible = false;
+            if (invincibilityTimer) clearTimeout(invincibilityTimer);
+            bird.classList.remove('invincible');
+            cancelAnimationFrame(gameLoopId);
+            clearInterval(pipeSpawnInterval);
+            clearInterval(cloudSpawnInterval);
+            clearInterval(powerUpSpawnInterval);
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
 
             clearGameElements();
             bird.style.display = 'none';
-            gameContainer.style.backgroundColor = '#87CEEB';
-            pauseButton.textContent = 'Pause';
             pauseButton.style.display = 'none';
-            lastMilestoneScore = 0;
-            document.body.className = ''; // Reset difficulty class
+            document.body.className = '';
 
             gameOverScreen.style.display = 'none';
             pauseScreen.style.display = 'none';
@@ -833,58 +790,69 @@
             updateLeaderboard();
             bird.style.display = 'none';
             pauseButton.style.display = 'none';
-            bgMusic.play().catch(e => console.warn('Background music autoplay failed on load:', e));
-            birdY = GAME_HEIGHT() * 0.4667;
-            bird.style.top = birdY + 'px';
             adjustGameSize();
+            birdY = GAME_HEIGHT() * 0.5;
+            bird.style.top = birdY + 'px';
         });
 
-        (function enhanceTouchSupport() {
+        let lastTouchTime = 0;
+        function enhanceTouchSupport() {
             const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-            function handleJumpEvent(e) {
-                if (!gameStarted || gameOver || isPaused || e.target.closest('button')) return;
+            function handleJump(e) {
+                const now = Date.now();
+                if (now - lastTouchTime < 200) return; // Debounce touch
+                lastTouchTime = now;
+
+                if (!gameStarted || gameOver || isPaused) return;
+                const rect = gameContainer.getBoundingClientRect();
+                const touchX = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+                const touchY = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+
+                // Avoid triggering jump if tapping buttons
+                if (touchX > pauseButton.offsetLeft && touchY < pauseButton.offsetHeight + pauseButton.offsetTop) return;
+
                 e.preventDefault();
                 jump();
             }
 
             if (isTouchDevice) {
-                gameContainer.addEventListener('touchstart', handleJumpEvent, { passive: false });
+                gameContainer.addEventListener('touchstart', handleJump, { passive: false });
                 gameContainer.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
             } else {
-                gameContainer.addEventListener('mousedown', handleJumpEvent);
+                gameContainer.addEventListener('mousedown', handleJump);
             }
             gameContainer.addEventListener('contextmenu', e => e.preventDefault());
-        })();
+        }
+        enhanceTouchSupport();
 
         function adjustGameSize() {
-            const maxWidth = 800;
-            const maxHeight = 600;
-            const windowWidth = window.innerWidth;
-            const windowHeight = window.innerHeight;
+            const vh = window.innerHeight * 0.9;
+            const vw = window.innerWidth * 0.9;
+            const aspectRatio = 4 / 3;
 
-            const targetAspectRatio = maxWidth / maxHeight;
-            const windowAspectRatio = windowWidth / windowHeight;
+            let height = Math.min(vh, vw / aspectRatio);
+            let width = height * aspectRatio;
 
-            let gameWidth = windowAspectRatio > targetAspectRatio
-                ? Math.min(maxWidth, windowHeight * 0.9 * targetAspectRatio)
-                : Math.min(maxWidth, windowWidth * 0.9);
-            let gameHeight = gameWidth / targetAspectRatio;
-
-            if (gameHeight > maxHeight) {
-                gameHeight = maxHeight;
-                gameWidth = gameHeight * targetAspectRatio;
+            if (width > vw) {
+                width = vw;
+                height = width / aspectRatio;
             }
 
-            gameContainer.style.width = `${gameWidth}px`;
-            gameContainer.style.height = `${gameHeight}px`;
+            gameContainer.style.width = `${width}px`;
+            gameContainer.style.height = `${height}px`;
 
             if (!gameStarted) {
-                birdY = GAME_HEIGHT() * 0.4667;
+                birdY = GAME_HEIGHT() * 0.5;
                 bird.style.top = birdY + 'px';
             }
         }
-        window.addEventListener('resize', adjustGameSize);
+
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(adjustGameSize, 100);
+        });
         window.addEventListener('orientationchange', adjustGameSize);
 
         (function handleAudioCompatibility() {
@@ -898,74 +866,13 @@
                     audio.currentTime = 0;
                 });
                 audioUnlocked = true;
-                console.log('Audio context unlocked.');
                 document.removeEventListener('touchstart', unlockAudio);
                 document.removeEventListener('click', unlockAudio);
-                document.removeEventListener('keydown', unlockAudio);
-                if (!gameStarted && !isPaused && !gameOver) {
-                    bgMusic.play().catch(e => console.warn("BG music still couldn't play after unlock:", e));
-                }
             }
 
             document.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
             document.addEventListener('click', unlockAudio, { once: true, passive: true });
-            document.addEventListener('keydown', unlockAudio, { once: true, passive: true });
-
-            audioElements.forEach(audio => {
-                const originalPlay = audio.play;
-                audio.play = function() {
-                    if (audio.paused) {
-                        const playPromise = originalPlay.call(this);
-                        if (playPromise !== undefined) {
-                            return playPromise.catch(error => {
-                                if (error.name !== 'NotAllowedError') console.warn(`Audio play failed for ${audio.id}:`, error);
-                            });
-                        }
-                    }
-                    return Promise.resolve();
-                };
-            });
         })();
-
-        (function addFullscreenSupport() {
-            const fsEnabled = document.fullscreenEnabled || document.webkitFullscreenEnabled || document.mozFullScreenEnabled || document.msFullscreenEnabled;
-            if (!fsEnabled) return;
-
-            const fullscreenBtnProto = document.createElement('button');
-            fullscreenBtnProto.textContent = 'Fullscreen';
-            fullscreenBtnProto.className = 'button';
-            fullscreenBtnProto.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
-            fullscreenBtnProto.style.marginTop = '10px';
-
-            function toggleFullscreen() {
-                if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
-                    const requestMethod = gameContainer.requestFullscreen || gameContainer.webkitRequestFullscreen || gameContainer.mozRequestFullScreen || gameContainer.msRequestFullscreen;
-                    if (requestMethod) requestMethod.call(gameContainer).catch(err => console.warn('Fullscreen request failed:', err));
-                } else {
-                    const exitMethod = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
-                    if (exitMethod) exitMethod.call(document);
-                }
-            }
-
-            [startScreen, pauseScreen, gameOverScreen].forEach(screen => {
-                const buttons = screen.querySelector('.button-group') || screen;
-                buttons.appendChild(fullscreenBtnProto.cloneNode(true)).addEventListener('click', toggleFullscreen);
-            });
-
-            function handleFullscreenChange() {
-                const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-                gameContainer.style.border = isFullscreen ? 'none' : '10px solid #5a4b3c';
-                gameContainer.style.borderRadius = isFullscreen ? '0' : '20px';
-                adjustGameSize();
-            }
-
-            document.addEventListener('fullscreenchange', handleFullscreenChange);
-            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-            document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-            document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-        })();
-
-        console.log('Flappy Bird loaded successfully.');
     </script>
 </body>
     </html>
