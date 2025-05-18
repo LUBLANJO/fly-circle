@@ -46,14 +46,17 @@
         #bird {
             position: absolute;
             width: 5%;
-            height: 5%;
+            aspect-ratio: 1 / 1;
             min-width: 30px;
-            min-height: 30px;
-            background: url('birdy.png') no-repeat center/contain;
+            background: url('bird-sprite.gif') no-repeat center/contain; /* Animated GIF */
             left: 25%;
             top: 50%;
             transition: transform 0.1s ease-out;
             z-index: 5;
+        }
+        #bird.fallback {
+            background: blue;
+            border-radius: 50%;
         }
         #bird.invincible {
             box-shadow: 0 0 15px 8px rgba(255, 255, 0, 0.7);
@@ -198,7 +201,7 @@
             background: rgba(255, 215, 0, 0.95);
             color: #333;
             padding: 0.5em 1em;
-距离: 10px;
+            border-radius: 10px;
             font-size: clamp(10px, 2vw, 16px);
             z-index: 50;
             display: none;
@@ -223,7 +226,7 @@
         /* --- Media Queries --- */
         @media (max-width: 600px) {
             #game-container { border-width: 5px; }
-            #bird { min-width: 25px; min-height: 25px; }
+            #bird { min-width: 25px; }
             #score, #scoreboard { font-size: clamp(10px, 2vw, 14px); }
             #pause-button { padding: 0.4em 0.8em; font-size: clamp(8px, 1.8vw, 12px); }
             .button { padding: 0.6em 1.2em; font-size: clamp(10px, 2vw, 14px); }
@@ -536,7 +539,6 @@
             const maxAttempts = 10;
 
             while (attempts++ < maxAttempts) {
-                // Find the nearest pipe pair to position the power-up in the gap
                 let targetPipe = null;
                 for (const pipe of pipes) {
                     if (pipe.isTop && pipe.x < spawnX + 100 && pipe.x + pipe.width > spawnX - 100) {
@@ -566,7 +568,6 @@
                     }
                 }
 
-                // Fallback to random position if no suitable pipe found
                 const minY = gameHeight * 0.2;
                 const maxY = gameHeight * 0.8 - POWERUP_SIZE;
                 const spawnY = Math.random() * (maxY - minY) + minY;
@@ -741,6 +742,7 @@
             if (isPaused) {
                 pauseScore.textContent = `Score: ${score}`;
                 bgMusic.pause();
+                cancelAnimationFrame(gameLoopId);
                 clearInterval(pipeSpawnInterval);
                 clearInterval(cloudSpawnInterval);
                 clearInterval(powerUpSpawnInterval);
@@ -750,7 +752,17 @@
                 pipeSpawnInterval = setInterval(createPipePair, levelConfig.pipeFreq);
                 cloudSpawnInterval = setInterval(createCloud, 5000);
                 powerUpSpawnInterval = setInterval(spawnPowerUp, 4000);
-                requestAnimationFrame(gameLoop);
+                if (isInvincible && !invincibilityTimer) {
+                    invincibilityTimer = setTimeout(() => {
+                        isInvincible = false;
+                        bird.classList.remove('invincible');
+                        showNotification("Invincibility Ended!");
+                        invincibilityTimer = null;
+                    }, 5000);
+                }
+                if (!gameLoopId) {
+                    gameLoop();
+                }
             }
         }
 
@@ -823,6 +835,13 @@
             adjustGameSize();
             birdY = GAME_HEIGHT() * 0.5;
             bird.style.top = birdY + 'px';
+
+            // Check if bird GIF loads, otherwise apply fallback
+            const birdImage = new Image();
+            birdImage.src = 'bird-sprite.gif';
+            birdImage.onerror = () => {
+                bird.classList.add('fallback');
+            };
         });
 
         let lastTouchTime = 0;
