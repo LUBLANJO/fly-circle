@@ -198,7 +198,7 @@
             background: rgba(255, 215, 0, 0.95);
             color: #333;
             padding: 0.5em 1em;
-            border-radius: 10px;
+距离: 10px;
             font-size: clamp(10px, 2vw, 16px);
             z-index: 50;
             display: none;
@@ -490,7 +490,7 @@
             bottomPipe.style.width = pipeWidth + 'px';
             bottomPipe.style.left = startX + 'px';
             bottomPipe.style.bottom = '0';
-            gameContainer.appendChild(bottomPipe); // Fixed: bottomPipe
+            gameContainer.appendChild(bottomPipe);
             const bottomPipeY = gameHeight - bottomPipeHeight;
             pipes.push({ element: bottomPipe, x: startX, y: bottomPipeY, height: bottomPipeHeight, width: pipeWidth, isTop: false, passed: false });
         }
@@ -516,10 +516,10 @@
             const powerUpBottom = yPosition + POWERUP_SIZE;
 
             for (const pipe of pipes) {
-                if (pipe.x < targetX + 100 && pipe.x + pipe.width > targetX - 100) {
-                    const pipeTop = pipe.y;
-                    const pipeBottom = pipe.y + pipe.height;
-                    if (powerUpTop < pipeBottom && powerUpBottom > pipeTop) return true;
+                if (pipe.x < targetX + pipe.width && pipe.x + pipe.width > targetX - POWERUP_SIZE) {
+                    const pipeTop = pipe.isTop ? 0 : pipe.y;
+                    const pipeBottom = pipe.isTop ? pipe.height : pipe.y + pipe.height;
+                    if (powerUpBottom > pipeTop && powerUpTop < pipeBottom) return true;
                 }
             }
             return false;
@@ -531,11 +531,44 @@
             const gameHeight = GAME_HEIGHT();
             const gameWidth = GAME_WIDTH();
             const spawnX = gameWidth + 50;
-            const minY = gameHeight * 0.2;
-            const maxY = gameHeight * 0.8 - POWERUP_SIZE;
 
             let attempts = 0;
-            while (attempts++ < 5) {
+            const maxAttempts = 10;
+
+            while (attempts++ < maxAttempts) {
+                // Find the nearest pipe pair to position the power-up in the gap
+                let targetPipe = null;
+                for (const pipe of pipes) {
+                    if (pipe.isTop && pipe.x < spawnX + 100 && pipe.x + pipe.width > spawnX - 100) {
+                        targetPipe = pipe;
+                        break;
+                    }
+                }
+
+                if (targetPipe) {
+                    const topPipeBottom = targetPipe.height;
+                    const bottomPipeTop = gameHeight - (gameHeight - topPipeBottom - levelConfig.verticalGap);
+                    const gapCenter = topPipeBottom + (bottomPipeTop - topPipeBottom) / 2;
+                    const spawnY = gapCenter - POWERUP_SIZE / 2;
+
+                    if (spawnY > POWERUP_SIZE && spawnY < gameHeight - POWERUP_SIZE && !doesYOverlapWithPipes(spawnY, spawnX)) {
+                        const powerUp = document.createElement('div');
+                        powerUp.className = 'power-up';
+                        powerUp.style.width = POWERUP_SIZE + 'px';
+                        powerUp.style.height = POWERUP_SIZE + 'px';
+                        powerUp.style.background = 'radial-gradient(circle, #ffd700, #ffa500)';
+                        powerUp.style.borderRadius = '50%';
+                        powerUp.style.left = spawnX + 'px';
+                        powerUp.style.top = spawnY + 'px';
+                        gameContainer.appendChild(powerUp);
+                        powerUps.push({ element: powerUp, x: spawnX, y: spawnY, type: 'invincible' });
+                        return;
+                    }
+                }
+
+                // Fallback to random position if no suitable pipe found
+                const minY = gameHeight * 0.2;
+                const maxY = gameHeight * 0.8 - POWERUP_SIZE;
                 const spawnY = Math.random() * (maxY - minY) + minY;
                 if (!doesYOverlapWithPipes(spawnY, spawnX)) {
                     const powerUp = document.createElement('div');
@@ -556,10 +589,7 @@
         function updateObstacles() {
             if (isPaused || gameOver) return;
 
-            const scoreBonus = Math.floor(score / 50) * (levelConfig.baseSpeed * 0.05);
-            const dynamicSpeed = Math.min(levelConfig.baseSpeed + scoreBonus, levelConfig.baseSpeed * 2);
-
-            bgMusic.playbackRate = Math.min(1 + (dynamicSpeed - levels.easy.baseSpeed) * 0.1, 1.5);
+            const speed = levelConfig.baseSpeed;
 
             const birdRect = bird.getBoundingClientRect();
             const gameRect = gameContainer.getBoundingClientRect();
@@ -569,7 +599,7 @@
 
             for (let i = pipes.length - 1; i >= 0; i--) {
                 const pipe = pipes[i];
-                pipe.x -= dynamicSpeed;
+                pipe.x -= speed;
                 pipe.element.style.left = pipe.x + 'px';
 
                 if (!isInvincible && checkCollision(birdCenterX, birdCenterY, birdRadius, pipe)) {
@@ -604,7 +634,7 @@
 
             for (let i = clouds.length - 1; i >= 0; i--) {
                 const cloud = clouds[i];
-                cloud.x -= dynamicSpeed * cloud.speedFactor;
+                cloud.x -= speed * cloud.speedFactor;
                 cloud.element.style.left = cloud.x + 'px';
                 if (cloud.x + cloud.element.offsetWidth < 0) {
                     cloud.element.remove();
@@ -614,7 +644,7 @@
 
             for (let i = powerUps.length - 1; i >= 0; i--) {
                 const powerUp = powerUps[i];
-                powerUp.x -= dynamicSpeed;
+                powerUp.x -= speed;
                 powerUp.element.style.left = powerUp.x + 'px';
 
                 const powerUpCenterX = powerUp.x + POWERUP_SIZE / 2;
@@ -875,4 +905,4 @@
         })();
     </script>
 </body>
-    </html>
+</html>
