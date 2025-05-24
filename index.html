@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="Play the classic Flappy Bird game online for free. Choose your difficulty: Easy, Medium, Hard, or Nightmare.">
+    <meta name="description" content="Play the classic Fly Ball game online for free. Choose your difficulty: Easy, Medium, Hard, or Nightmare.">
     <title>Fly Ball</title>
     <link rel="icon" type="image/x-icon" href="ball.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -923,6 +923,9 @@
             document.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
             document.addEventListener('click', unlockAudio, { once: true, passive: true });
         })();
+
+        // Immediately update leaderboard and achievements
+        updateLeaderboard();
     </script>
 </body>
 </html>
