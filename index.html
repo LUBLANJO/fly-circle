@@ -244,7 +244,7 @@
         <div id="notification" aria-live="assertive"></div>
 
         <div id="start-screen" role="dialog" aria-label="Start Menu">
-            <h2>Flappy Bird</h2>
+            <h2>Fly Ball</h2>
             <div id="leaderboard">Loading High Scores...</div>
             <div id="achievements">Loading Achievements...</div>
             <div id="tips">Controls: Spacebar, Click, or Tap to jump. Ctrl+P or Esc to pause/resume. Avoid pipes!</div>
@@ -277,7 +277,7 @@
         </div>
     </div>
 
-    <audio id="jump-sound" src="jump.mp3" preload="auto"></audio>
+    <audio id="kick-sound" src="kick.mp3" preload="auto"></audio>
     <audio id="pipe-sound" src="pipe.mp3" preload="auto"></audio>
     <audio id="game-over-sound" src="gameover.mp3" preload="auto"></audio>
     <audio id="power-up-sound" src="powerup.mp3" preload="auto"></audio>
@@ -298,7 +298,7 @@
         const notification = document.getElementById('notification');
         const nightmareBtn = document.getElementById('nightmare-btn');
         const pauseScore = document.getElementById('pause-score');
-        const jumpSound = document.getElementById('jump-sound');
+        const kickSound = document.getElementById('kick-sound');
         const pipeSound = document.getElementById('pipe-sound');
         const gameOverSound = document.getElementById('game-over-sound');
         const powerUpSound = document.getElementById('power-up-sound');
@@ -710,7 +710,7 @@
         function jump() {
             if (!gameStarted || gameOver || isPaused) return;
             velocity = levelConfig.jump;
-            jumpSound.play().catch(() => {});
+            kickSound.play().catch(() => {});
             bird.style.transform = `rotate(-30deg)`;
         }
 
@@ -906,7 +906,7 @@
         window.addEventListener('orientationchange', adjustGameSize);
 
         (function handleAudioCompatibility() {
-            const audioElements = [bgMusic, jumpSound, pipeSound, gameOverSound, powerUpSound];
+            const audioElements = [bgMusic, kickSound, pipeSound, gameOverSound, powerUpSound];
             let audioUnlocked = false;
 
             function unlockAudio() {
