@@ -42,13 +42,14 @@
             touch-action: manipulation;
         }
 
-        /* --- Bird --- */
+        /* --- Ball (using ball.jfif) --- */
         #bird {
             position: absolute;
             width: 5%;
             aspect-ratio: 1 / 1;
             min-width: 30px;
-            background: url('bird-sprite.gif') no-repeat center/contain; /* Animated GIF */
+            background: url('ball.jfif') no-repeat center/contain; /* External ball image */
+            border-radius: 50%; /* Circular shape */
             left: 25%;
             top: 50%;
             transition: transform 0.1s ease-out;
@@ -236,7 +237,7 @@
 </head>
 <body>
     <div id="game-container" role="main">
-        <div id="bird" role="img" aria-label="Flappy Bird"></div>
+        <div id="bird" role="img" aria-label="Flappy Ball"></div>
         <div id="score" aria-live="polite">Score: 0</div>
         <div id="scoreboard" aria-live="polite">Pipes: 0</div>
         <button id="pause-button" onclick="togglePause()" aria-label="Pause Game">Pause</button>
@@ -559,7 +560,7 @@
                         powerUp.style.width = POWERUP_SIZE + 'px';
                         powerUp.style.height = POWERUP_SIZE + 'px';
                         powerUp.style.background = 'radial-gradient(circle, #ffd700, #ffa500)';
-                        powerUp.style.borderRadius = '50%';
+                        powerUp.style.border-radius = '50%';
                         powerUp.style.left = spawnX + 'px';
                         powerUp.style.top = spawnY + 'px';
                         gameContainer.appendChild(powerUp);
@@ -577,7 +578,7 @@
                     powerUp.style.width = POWERUP_SIZE + 'px';
                     powerUp.style.height = POWERUP_SIZE + 'px';
                     powerUp.style.background = 'radial-gradient(circle, #ffd700, #ffa500)';
-                    powerUp.style.borderRadius = '50%';
+                    powerUp.style.border-radius = '50%';
                     powerUp.style.left = spawnX + 'px';
                     powerUp.style.top = spawnY + 'px';
                     gameContainer.appendChild(powerUp);
@@ -836,10 +837,10 @@
             birdY = GAME_HEIGHT() * 0.5;
             bird.style.top = birdY + 'px';
 
-            // Check if bird GIF loads, otherwise apply fallback
-            const birdImage = new Image();
-            birdImage.src = 'bird-sprite.gif';
-            birdImage.onerror = () => {
+            // Check if ball image loads, otherwise apply fallback
+            const ballImage = new Image();
+            ballImage.src = 'ball.jfif';
+            ballImage.onerror = () => {
                 bird.classList.add('fallback');
             };
         });
